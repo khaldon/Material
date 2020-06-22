@@ -5,7 +5,7 @@
 *.env
 migrations/
 node_modules/
-
+.idea/
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
@@ -14,10 +14,10 @@ node_modules/
 .pnp.js
 
 # testing
-/coverage
+coverage/
 
 # production
-/build
+build/
 
 # misc
 .DS_Store
