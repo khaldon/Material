@@ -6,6 +6,7 @@ from django.dispatch import receiver
 
 # Create your models here.
 
+
 class ProfileUser(models.Model):
     user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
     birth_date = models.DateField()
