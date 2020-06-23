@@ -12,6 +12,7 @@ from .serializers import UserLoginSerializer, UserSerializerWithToken
 
 User = get_user_model()
 
+
 class UserSignUpAPIView(APIView):
     """
     View that handles user signup and returns email & JWT.
@@ -24,6 +25,7 @@ class UserSignUpAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=HTTP_201_CREATED)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
 
 class UserLoginAPIView(APIView):
     """
