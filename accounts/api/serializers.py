@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
+from django.conf import settings
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -60,7 +61,15 @@ class UserSerializerWithToken(serializers.ModelSerializer):
     """
 
     token = serializers.SerializerMethodField()
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(required=True,write_only=True)
+    password_2 = serializers.CharField(required=True,write_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'token', 'username', 'email', 'password', 'password_2'
+        ]
+
 
     def get_token(self, obj):
         """
@@ -71,6 +80,20 @@ class UserSerializerWithToken(serializers.ModelSerializer):
         token = jwt_encode_handler(payload)
         return token
 
+    def validate_password(self, value):
+        if len(value) < getattr(settings, 'PASSWORD_MIN_LENGTH', 8):
+            raise serializers.ValidationError(
+            "Password should be atleast %s characters long." % getattr(settings, 'PASSWORD_MIN_LENGTH', 8)
+            )
+        return value
+
+    def validate_password_2(self, value):
+        data = self.get_initial()
+        password = data.get('password')
+        if password != value:
+            raise serializers.ValidationError("Passwords doesn't match.")
+        return value
+
     def create(self, validated_data):
         """
         Handles the creation of user.
@@ -79,13 +102,8 @@ class UserSerializerWithToken(serializers.ModelSerializer):
         """
         password = validated_data.pop('password', None)
         instance = self.Meta.model(**validated_data)
+        
         if password is not None:
             instance.set_password(password)
         instance.save()
         return instance
-
-    class Meta:
-        model = User
-        fields = [
-            'token', 'username', 'email', 'password',
-        ]
