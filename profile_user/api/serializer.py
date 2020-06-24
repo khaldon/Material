@@ -1,13 +1,13 @@
-from profile_user.models import  ProfileUser
+from profile_user.models import Profile
 from rest_framework import serializers
 
 
-class ProfileUserSerializer(serializers.HyperlinkedModelSerializer):
-    profile = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='profile-user')
+class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+    profile = serializers.PrimaryKeyRelatedField(read_only=True,)
 
     class Meta:
-        model = ProfileUser
-        fields = ('url', 'pk', 'profile', 'birth_date', 'image')
+        model = Profile
+        fields = ('pk', 'profile', 'birth_date', 'image')
 
 
 
