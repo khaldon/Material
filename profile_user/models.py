@@ -12,6 +12,16 @@ class ProfileUser(models.Model):
     birth_date = models.DateField(null=True, blank=True)
     image = models.ImageField(upload_to='user_images', null=True, blank=True)
 
+    def screen_name(self):
+        """Returns screen name."""
+        try:
+            if self.user.get_full_name():
+                return self.user.get_full_name()
+            else:
+                return self.user.username
+        except:
+            return self.user.username
+
     def get_picture(self):
         default_picture = settings.STATIC_URL + 'img/default_picture.png'
         if self.image:

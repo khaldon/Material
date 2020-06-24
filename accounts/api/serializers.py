@@ -10,6 +10,25 @@ jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
 
 User = get_user_model()
 
+class UserDetailSerializer(serializers.ModelSerializer):
+    """
+    Serializer that represents a user details.
+    """
+
+    screen_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            'screen_name', 'username'
+        ]
+
+    def get_screen_name(self, obj):
+        """
+        Returns user screen name.
+        :return: string
+        """
+        return obj.profile.screen_name()
 
 class UserLoginSerializer(serializers.ModelSerializer):
     """
@@ -74,6 +93,11 @@ class UserSerializerWithToken(serializers.ModelSerializer):
         token = jwt_encode_handler(payload)
         return token
 
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email already exists.")
+        return value
+
     def validate_password(self, value):
         if len(value) < getattr(settings, 'PASSWORD_MIN_LENGTH', 8):
             raise serializers.ValidationError(
@@ -111,3 +135,4 @@ class UserSerializerWithToken(serializers.ModelSerializer):
         fields = [
             'token', 'username', 'email', 'password', 'password2'
         ]
+        
