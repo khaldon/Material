@@ -36,6 +36,11 @@ class Course(models.Model):
     poster_preview_video = models.ImageField(upload_to='courses/course_poster_preview', null=True)    
     owned = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = course_slugify(f"{self.title}")
+        super().save(*args, **kwargs)
+
     def get_admins(self):
         """Return admins of a course."""
         return self.admins.all()
@@ -47,11 +52,6 @@ class Course(models.Model):
             return self.cover.url
         else:
             return default_picture
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = course_slugify(f"{self.title}")
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
