@@ -1,10 +1,10 @@
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from rest_framework import serializers
 from courses.models import Course
-from accounts.api.serializers import UserDetailSerializer
+# from accounts.api.serializers import UserDetailSerializer
 
 class CourseSerializer(serializers.ModelSerializer):
-    admins = UserDetailSerializer(read_only=True)
+    # admins = UserDetailSerializer(read_only=True)
     students_count = serializers.SerializerMethodField()
     created = serializers.DateTimeField(read_only=True)
     created_naturaltime = serializers.SerializerMethodField()

@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from slugify import UniqueSlugify
 from django.urls import reverse
-from languages.fields import LanguageField
+# from languages.fields import LanguageField
 
 # Create your models here.
 
@@ -24,12 +24,11 @@ class Course(models.Model):
     image = models.ImageField(upload_to='courses/course_images',blank=True,null=True , default='courses/image.png')
     cover = models.ImageField(upload_to='courses/course_covers',blank=True,null=True)
     admins = models.ManyToManyField(User, related_name='creator')
-    students = models.ForeignKey(User,related_name='joined_courses',blank=True,null=True,on_delete=models.CASCADE)
+    students = models.ManyToManyField(User,related_name='joined_courses',blank=True,null=True)
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True)
     category = models.ForeignKey(CourseCategories,on_delete=models.CASCADE)
     certificate = models.ImageField(upload_to='courses/course_certificates',blank=True,null=True)
-    languages = LanguageField(blank=True)
     rank_score = models.FloatField(default=0.0)
     price = models.FloatField(default=0.0)
     discount_price = models.FloatField(blank=True, null=True)
