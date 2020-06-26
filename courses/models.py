@@ -24,7 +24,7 @@ class Course(models.Model):
     image = models.ImageField(upload_to='courses/course_images',blank=True,null=True , default='courses/image.png')
     cover = models.ImageField(upload_to='courses/course_covers',blank=True,null=True)
     admins = models.ManyToManyField(User, related_name='creator')
-    students = models.ForeignKey(User,related_name='joined_courses',blank=True,null=True,on_delete=models.CASCADE)
+    students = models.ManyToManyField(User,related_name='joined_courses',blank=True,null=True)
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True)
     category = models.ForeignKey(CourseCategories,on_delete=models.CASCADE)
@@ -59,7 +59,7 @@ class Course(models.Model):
 class CourseSections(models.Model):
     creator = models.ForeignKey(User,related_name='creator_sections',on_delete=models.CASCADE,null=True)
     title = models.CharField(max_length=50)
-    course = models.ForeignKey(Course, related_name='course_section', on_delete=models.CASCADE,null=True)
+    course = models.OneToOneField(Course, related_name='course_section', on_delete=models.CASCADE,null=True)
 
     def __str__(self):
         return self.title
