@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from courses.models import Course
 from .permissions import IsAdminOrReadOnly
 from .serializers import CourseSerializer
-
+from rest_framework import filters
 
 class CourseListCreateAPIView(ListCreateAPIView):
     """
@@ -17,7 +17,7 @@ class CourseListCreateAPIView(ListCreateAPIView):
     serializer_class = CourseSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [SearchFilter, OrderingFilter]
-    search_fields = ['title']
+    search_fields = ['title','description','price']
 
 class CourseRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     """
