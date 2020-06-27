@@ -15,7 +15,7 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = [
-            'id', 'title', 'slug', 'description', 'cover', 'cover_url',
+            'id', 'title', 'slug', 'description', 'cover', 'cover_url', 'price', 'category', 'image', 'poster_preview_video', 'preview_video', 'students', 
             'admins', 'students_count', 'created',
             'created_naturaltime', 'is_joined', 'is_admin',
         ]
