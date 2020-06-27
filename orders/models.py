@@ -33,7 +33,8 @@ class Order(models.Model):
     courses = models.ManyToManyField(OrderCourse)
     ordered = models.BooleanField(default=False)
     ordered_date = models.DateTimeField()
-    payment = models.ForeignKey('Payment', on_delete=models.SET_NULL, blank=True)
+    payment = models.ForeignKey('Payment', on_delete=models.SET_NULL, blank=True, null=True)
+
     def get_total(self):
         total = 0
         for order_course in self.courses.all():
@@ -58,6 +59,6 @@ class PaymentInfo(models.Model):
     last_name = models.CharField(max_length=100, default=False)
 
     def __str__(self):
-        return '{} {} {}'.format(self.user.username, self.first_name, self.last_name
+        return '{} {} {}'.format(self.user.username, self.first_name, self.last_name)
 
 
