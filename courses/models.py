@@ -24,7 +24,7 @@ class Course(models.Model):
     image = models.ImageField(upload_to='courses/course_images',blank=True,null=True , default='courses/image.png')
     cover = models.ImageField(upload_to='courses/course_covers',blank=True,null=True)
     admins = models.ManyToManyField(User, related_name='creator')
-    students = models.ManyToManyField(User,related_name='joined_courses',blank=True,null=True)
+    students = models.ManyToManyField(User,related_name='joined_courses',blank=True)
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True)
     category = models.ForeignKey(CourseCategories,on_delete=models.CASCADE)
