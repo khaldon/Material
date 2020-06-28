@@ -17,7 +17,9 @@ class TestOrderCourse(TestCase):
                                                        ordered=True,
                                                        course=self.course)
 
-    def test_courses_list_count(self):
+
+
+    def test_course_return_value(self):
         """Test to count courses."""
-        self.assertEqual(OrderCourse.objects.count(), 1)
+        self.assertEqual(str(self.order_course), 'test title 1')
 
