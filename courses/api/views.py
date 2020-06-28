@@ -65,3 +65,29 @@ class GetJoinedCourses(APIView):
         courses = request.user.joined_courses.all()
         courses_list = [{'id': course.id, 'title': course.title} for course in courses]
         return Response(courses_list)
+
+class WishCourseView(APIView):
+    def get(self, request, format=None):
+        """
+        View that wish a course and returns action status
+        """
+        data = dict()
+        user = request.user
+        course_slug = request.GET.get('course_slug')
+        course = Course.objects.get(slug=course_slug)
+        user = request.user
+        if course in user.wished_courses.all():
+            course.wishes.remove(user)
+            data['is_wished'] = False
+        else:
+            course.wishes.add(user)
+            data['is_wished'] = True
+        data['total_wishes'] = course.wishes.count()
+        return Response(data)
+
+class GetWishedCourses(APIView):
+    def get(self, request, format=None):
+        """Return a list of user wished courses"""
+        courses = request.user.wished_courses.all()
+        courses_list = [{'id': course.id, 'title': course.title} for course in courses]
+        return Response(courses_list)
