@@ -22,11 +22,8 @@ urlpatterns = [
     re_path(r'^api/profile/', include('profile_user.api.urls')),
     re_path(r'^api/accounts/', include('accounts.api.urls')),
     re_path(r'^api/courses/', include('courses.api.urls')),
-<<<<<<< HEAD
     re_path(r'^api/order/', include('orders.api.urls')),
-=======
     re_path(r'^api/reviews/', include('reviews.api.urls')),
->>>>>>> fa211371097864b840d16422eff3e7fbfdc739d0
     re_path(r'^api/auth/token/obtain/', obtain_jwt_token),
     re_path(r'^api/auth/token/refresh/', refresh_jwt_token),
     re_path(r'^api/auth/token/verify/', verify_jwt_token),
