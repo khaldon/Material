@@ -35,6 +35,7 @@ class Course(models.Model):
     preview_video = models.FileField(upload_to='courses/course_preview_videos',max_length=100,null=True)
     poster_preview_video = models.ImageField(upload_to='courses/course_poster_preview', null=True)    
     owned = models.BooleanField(default=False)
+    wishes = models.ManyToManyField(User, related_name='wished_courses', blank=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:

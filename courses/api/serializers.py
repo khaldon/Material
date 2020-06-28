@@ -11,13 +11,14 @@ class CourseSerializer(serializers.ModelSerializer):
     is_joined = serializers.SerializerMethodField()
     cover_url = serializers.SerializerMethodField()
     is_admin = serializers.SerializerMethodField()
+    is_wished = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
         fields = [
             'id', 'title', 'slug', 'description', 'cover', 'cover_url', 'price', 'category', 'image', 'poster_preview_video', 'preview_video', 'students', 
             'admins', 'students_count', 'created',
-            'created_naturaltime', 'is_joined', 'is_admin',
+            'created_naturaltime', 'is_joined', 'is_admin', 'is_wished',
         ]
 
     def get_admins(self, obj):
@@ -41,6 +42,16 @@ class CourseSerializer(serializers.ModelSerializer):
         if request and hasattr(request, 'user'):
             user = request.user
         if user in obj.students.all():
+            return True
+        return False
+
+    def get_is_wished(self, obj):
+        """Check if user has wished course"""
+        user = None
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            user = request.user
+        if user in obj.wishes.all():
             return True
         return False
 
