@@ -10,25 +10,25 @@ jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
 
 User = get_user_model()
 
-# class UserDetailSerializer(serializers.ModelSerializer):
-#     """
-#     Serializer that represents a user details.
-#     """
-#
-#     screen_name = serializers.SerializerMethodField()
-#
-#     class Meta:
-#         model = User
-#         fields = [
-#             'screen_name', 'username'
-#         ]
-#
-#     def get_screen_name(self, obj):
-#         """
-#         Returns user screen name.
-#         :return: string
-#         """
-#         return obj.profile.screen_name()
+class UserDetailSerializer(serializers.ModelSerializer):
+    """
+    Serializer that represents a user details.
+    """
+
+    screen_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            'screen_name', 'username'
+        ]
+
+    def get_screen_name(self, obj):
+        """
+        Returns user screen name.
+        :return: string
+        """
+        return obj.profile.screen_name()
 
 class UserLoginSerializer(serializers.ModelSerializer):
     """

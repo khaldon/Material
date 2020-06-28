@@ -7,6 +7,16 @@ from courses.models import Course
 from .permissions import IsAdminOrReadOnly
 from .serializers import CourseSerializer
 from rest_framework import filters
+from django_filters import rest_framework as filters
+from django_filters.rest_framework import DjangoFilterBackend
+
+
+class CourseFilter(filters.FilterSet):
+    min_price = filters.NumberFilter(field_name="price", lookup_expr='gte')
+    max_price = filters.NumberFilter(field_name="price", lookup_expr='lte')
+    class Meta:
+        model = Course
+        fields = ['min_price', 'max_price']
 
 class CourseListCreateAPIView(ListCreateAPIView):
     """
@@ -16,8 +26,9 @@ class CourseListCreateAPIView(ListCreateAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    filter_backends = [SearchFilter, OrderingFilter]
+    filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     search_fields = ['title','description','price']
+    filter_class = CourseFilter
 
 class CourseRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     """
