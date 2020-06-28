@@ -22,6 +22,7 @@ urlpatterns = [
     re_path(r'^api/profile/', include('profile_user.api.urls')),
     re_path(r'^api/accounts/', include('accounts.api.urls')),
     re_path(r'^api/courses/', include('courses.api.urls')),
+    re_path(r'^api/reviews/', include('reviews.api.urls')),
     re_path(r'^api/auth/token/obtain/', obtain_jwt_token),
     re_path(r'^api/auth/token/refresh/', refresh_jwt_token),
     re_path(r'^api/auth/token/verify/', verify_jwt_token),
