@@ -27,5 +27,4 @@ urlpatterns = [
     re_path(r'^api/auth/token/obtain/', obtain_jwt_token),
     re_path(r'^api/auth/token/refresh/', refresh_jwt_token),
     re_path(r'^api/auth/token/verify/', verify_jwt_token),
-
 ]

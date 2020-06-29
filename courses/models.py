@@ -38,7 +38,7 @@ class Course(models.Model):
     students = models.ManyToManyField(User,related_name='joined_courses',blank=True)
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True)
-    category = models.ForeignKey(CourseCategories, on_delete=models.CASCADE)
+    category = models.ManyToManyField(CourseCategories)
     certificate = models.ImageField(upload_to='courses/course_certificates',blank=True,null=True)
     rank_score = models.FloatField(default=0.0)
     price = models.FloatField(default=0.0)
@@ -55,11 +55,11 @@ class Course(models.Model):
         super().save(*args, **kwargs)
 
     def get_admins(self):
-        """Return admins of a course."""
+        """Return admins of a course"""
         return self.admins.all()
 
     def get_picture(self):
-        """Return cover url (if any) of a course."""
+        """Return cover url (if any) of a course"""
         default_picture = settings.STATIC_URL + 'img/cover.png'
         if self.cover:
             return self.cover.url
@@ -88,6 +88,14 @@ class SectionVideos(models.Model):
     short_description = models.CharField(max_length=50,null=True)
     watched = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True,null=True)
+
+    def get_picture(self):
+        """Return cover url (if any) of a video"""
+        default_picture = settings.STATIC_URL + 'img/cover.png'
+        if self.preview_image:
+            return self.preview_image.url
+        else:
+            return default_picture
 
     def get_absolute_url(self):
         return reverse('courses:course_detail',args=[self.section.course.slug])
