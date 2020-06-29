@@ -99,8 +99,6 @@ class CourseSectionSerializer(serializers.ModelSerializer):
         if request and hasattr(request, 'user'):
             user = request.user
         instance.save()
-        instance.creator.add(user)
-        instance.save()
         return instance
 
 class SectionVideoSerializer(serializers.ModelSerializer):

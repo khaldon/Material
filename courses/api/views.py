@@ -131,10 +131,10 @@ class SectionsListAPIView(RetrieveAPIView):
 class SectionsCreateAPIView(CreateAPIView):
     queryset = CourseSections.objects.all()
     serializer_class = CourseSectionSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly,IsAdminOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
     lookup_field = 'slug'
     lookup_url_kwarg = 'course__slug'
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
-        
+        print(serializer)
