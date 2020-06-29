@@ -11,11 +11,22 @@ from django.urls import reverse
 
 User = settings.AUTH_USER_MODEL
 
+
+Rating_CHOICES = (
+    (1, 'Poor'),
+    (2, 'Average'),
+    (3, 'Good'),
+    (4, 'Very good'),
+    (5, 'Excellent')
+)
+
+
 class CourseCategories(models.Model):
     title = models.CharField(max_length=50)
 
     def __str__(self):
         return self.title
+
 
 class Course(models.Model):
     title = models.CharField(max_length=255)
@@ -27,7 +38,7 @@ class Course(models.Model):
     students = models.ManyToManyField(User,related_name='joined_courses',blank=True)
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True)
-    category = models.ForeignKey(CourseCategories,on_delete=models.CASCADE)
+    category = models.ForeignKey(CourseCategories, on_delete=models.CASCADE)
     certificate = models.ImageField(upload_to='courses/course_certificates',blank=True,null=True)
     rank_score = models.FloatField(default=0.0)
     price = models.FloatField(default=0.0)
@@ -36,7 +47,8 @@ class Course(models.Model):
     poster_preview_video = models.ImageField(upload_to='courses/course_poster_preview', null=True)    
     owned = models.BooleanField(default=False)
     wishes = models.ManyToManyField(User, related_name='wished_courses', blank=True)
-
+    rating = models.IntegerField(choices=Rating_CHOICES)
+    
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = course_slugify(f"{self.title}")
@@ -57,13 +69,16 @@ class Course(models.Model):
     def __str__(self):
         return self.title
 
+
+
 class CourseSections(models.Model):
     creator = models.ForeignKey(User,related_name='creator_sections',on_delete=models.CASCADE,null=True)
     title = models.CharField(max_length=50)
     course = models.OneToOneField(Course, related_name='course_section', on_delete=models.CASCADE,null=True)
-
+   
     def __str__(self):
         return self.title
+
 
 class SectionVideos(models.Model):
     title = models.CharField(max_length=50,null=True)
