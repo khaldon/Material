@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from .views import CourseListCreateAPIView, CourseRetrieveUpdateDestroyAPIView, GetJoinedCourses, JoinCourseView, WishCourseView, GetWishedCourses
+from .views import CourseListCreateAPIView, CourseRetrieveUpdateDestroyAPIView, GetJoinedCourses, JoinCourseView, WishCourseView, GetWishedCourses, CategoryListAPIView, SectionsListAPIView, SectionsCreateAPIView
 
 urlpatterns = [
     url(r'^courses/$', CourseListCreateAPIView.as_view(), name='list_or_create_courses'),
@@ -8,4 +8,7 @@ urlpatterns = [
     url(r'^user_joined_courses/$', GetJoinedCourses.as_view()),
     url(r'^actions/wish/$', WishCourseView.as_view()),
     url(r'^user_wished_courses/$', GetWishedCourses.as_view()),
+    url(r'^categories/$', CategoryListAPIView.as_view(), name='list_categories'),
+    url(r'^sections/(?P<course__slug>[-\w]+)/$', SectionsListAPIView.as_view(), name='list_sections'),
+    url(r'^sections/(?P<course__slug>[-\w]+)/create/$', SectionsCreateAPIView.as_view(), name='create_sections'),
 ]
