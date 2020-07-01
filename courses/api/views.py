@@ -147,6 +147,21 @@ class RatingListAPIView(RetrieveAPIView):
     serializer_class = RatingSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+class RatingCreateAPIView(CreateAPIView):
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
+
+    def post(self, request, course):
+        course  = Course.objects.get(slug=course)
+        rating = self.request.query_params.get('rate')
+        student = request.user.id
+        context = {'course':course.id, 'student':student, 'rating':rating}
+        serializer = RatingSerializer(data = context)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+
 class CartView(APIView):
     def get(self, *args,  **kwargs):
         try:

@@ -127,4 +127,3 @@ class RatingSerializer(serializers.ModelSerializer):
         fields = ['rating', 'student', 'course']
 
 
-
