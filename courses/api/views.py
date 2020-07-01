@@ -3,13 +3,16 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from courses.models import Course, CourseCategories, CourseSections, SectionVideos
+from courses.models import Course, CourseCategories, CourseSections, SectionVideos, Rating
 from .permissions import IsAdminOrReadOnly
-from .serializers import CourseSerializer, CategorySerializer, CourseSectionSerializer, SectionVideoSerializer
+from .serializers import (CourseSerializer, CategorySerializer, CourseSectionSerializer,
+                          SectionVideoSerializer, RatingSerializer)
 from rest_framework import filters
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework import status
+from django.db.models import Q
 class CategoryListAPIView(ListAPIView):
     queryset = CourseCategories.objects.all()
     serializer_class = CategorySerializer
@@ -139,22 +142,24 @@ class SectionsCreateAPIView(CreateAPIView):
         serializer.save(creator=self.request.user)
 
 
-class RatingSerializerCreate(APIView):
-    # queryset = Rating.objects.all()
-    # serializer_class = RatingSerializer
-    def post(self, request, course=None):
-        # rate = Rating.objects.values_list('rating', flat=True)
-        # total = sum(rate)
-        # average = int(total/len(rate))
-        # rate = Rating.objects.get()
-        serializer = RatingSerializer(data=request.data)
-        user = request.user
-        try:
-            if Rating.objects.get(Q(student=user)):
-                return Response("YES")
-        except ObjectDoesNotExist:
-            Rating.objects.create(course=course,rating=serializer, student=user )
-            return Response("you are not username")
+class RatingCreate(ListCreateAPIView):
+
+    lookup_url_kwarg = ['course', 'student']
+    def post(self, request, course, student):
+        course = self.kwargs['course']
+        student = self.kwargs['student']
+        print(request.data)
+        request.data['course'] = course
+        request.data['student'] = student
+        # print(context)
+        serializer = RatingSerializer(request.data)
+        # print(serializer.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 class CartView(APIView):

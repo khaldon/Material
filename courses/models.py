@@ -47,8 +47,7 @@ class Course(models.Model):
     poster_preview_video = models.ImageField(upload_to='courses/course_poster_preview', null=True)    
     owned = models.BooleanField(default=False)
     wishes = models.ManyToManyField(User, related_name='wished_courses', blank=True)
-    rating = models.IntegerField(choices=Rating_CHOICES,default=5)
-    
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = course_slugify(f"{self.title}")
@@ -68,6 +67,11 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+
+class Rating(models.Model):
+    rating = models.IntegerField(choices=Rating_CHOICES, default=0)
+    student = models.ForeignKey(User, related_name='user_rate', on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, related_name='course_rate', on_delete=models.CASCADE)
 
 
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Course, CourseCategories, CourseSections, SectionVideos
+from .models import Course, CourseCategories, CourseSections, SectionVideos, Rating
 
 # Register your models here.
 

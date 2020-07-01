@@ -120,7 +120,11 @@ class SectionVideoSerializer(serializers.ModelSerializer):
         return request.build_absolute_uri(preview_image_url)
 
 class RatingSerializer(serializers.ModelSerializer):
-
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
     class Meta:
         model = Rating
-        fields = ['rating']
+        fields = ['rating', 'student', 'course']
+
+
+
