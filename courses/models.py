@@ -47,7 +47,7 @@ class Course(models.Model):
     poster_preview_video = models.ImageField(upload_to='courses/course_poster_preview', null=True)    
     owned = models.BooleanField(default=False)
     wishes = models.ManyToManyField(User, related_name='wished_courses', blank=True)
-    rating = models.IntegerField(choices=Rating_CHOICES)
+    rating = models.IntegerField(choices=Rating_CHOICES,default=5)
     
     def save(self, *args, **kwargs):
         if not self.slug:

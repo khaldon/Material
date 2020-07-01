@@ -138,3 +138,24 @@ class SectionsCreateAPIView(CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
         print(serializer)
+
+class VideosListAPIView(RetrieveAPIView):
+    """
+    View that returns a list of videos & handles the creation of
+    videos & returns data back
+    """
+    queryset = SectionVideos.objects.all()
+    lookup_field = "section__course__slug"
+    serializer_class = SectionVideoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
+
+class VideosCreateAPIView(CreateAPIView):
+    queryset = SectionVideos.objects.all()
+    serializer_class = SectionVideoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
+    # lookup_field = 'slug'
+    # lookup_url_kwarg = 'course__slug'
+
+    # def perform_create(self, serializer):
+    #     serializer.save(creator=self.request.user)
+    #     print(serializer)
