@@ -4,15 +4,21 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from courses.models import Course, CourseCategories, CourseSections, SectionVideos, Rating
+from orders.models import OrderCourse, Order
+from orders.api.serializer import CartSerializer
 from .permissions import IsAdminOrReadOnly
 from .serializers import (CourseSerializer, CategorySerializer, CourseSectionSerializer,
                           SectionVideoSerializer, RatingSerializer)
 from rest_framework import filters
+from django.utils import timezone
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
-from django.db.models import Q
+from django.shortcuts import get_object_or_404
+
+
+
 class CategoryListAPIView(ListAPIView):
     queryset = CourseCategories.objects.all()
     serializer_class = CategorySerializer
@@ -169,11 +175,13 @@ class CartView(APIView):
         try:
             order = Order.objects.get(user=self.request.user, ordered=False)
             return Response(order)
-        except ObjectDoesNotExit:
+        except ObjectDoesNotExist:
             return Response("Doesn't exits")
 
 class AddCart(ListCreateAPIView):
-    def get(self, pk):
+    queryset = OrderCourse.objects.all()
+    serializer_class = CartSerializer
+    def post(self, request, pk):
         course = get_object_or_404(Course, pk=pk)
         order_course, created = OrderCourse.objects.get_or_create(
         course=course,

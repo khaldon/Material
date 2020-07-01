@@ -42,3 +42,9 @@ class PaymentInfoSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name'
         )
+
+
+class CartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.OrderCourse
+        fields  = '__all__'

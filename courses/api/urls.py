@@ -2,7 +2,7 @@ from django.conf.urls import url
 from .views import (CourseListCreateAPIView, CourseRetrieveUpdateDestroyAPIView,
                     GetJoinedCourses, JoinCourseView, WishCourseView,
                     GetWishedCourses, CategoryListAPIView, SectionsListAPIView,
-                    SectionsCreateAPIView, VideosListAPIView,
+                    SectionsCreateAPIView, VideosListAPIView,CartView,AddCart,
                     VideosCreateAPIView, RatingListAPIView, RatingCreateAPIView)
 
 urlpatterns = [
@@ -18,5 +18,7 @@ urlpatterns = [
     url(r'^videos/(?P<section__course__slug>[-\w]+)/$', VideosListAPIView.as_view(), name='list_videos'),
     url(r'^videos/create/$', VideosCreateAPIView.as_view(), name='create_videos'),
     url(r'^rates/(?P<course__slug>[-\w]+)/$', RatingListAPIView.as_view(), name='list_rates'),
-    url(r'^rate/create/(?P<course>.+)/$', RatingCreate.as_view(), name='rate'),
+    url(r'^rate/create/(?P<course>.+)/$', RatingCreateAPIView.as_view(), name='rate'),
+    url(r'^cart/$', CartView.as_view(), name='cart_view'),
+    url(r'cart/add/(?P<pk>.+)/', AddCart.as_view(), name='add_cart')
 ]
