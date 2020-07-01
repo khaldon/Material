@@ -128,7 +128,11 @@ class SectionsCreateAPIView(CreateAPIView):
     lookup_url_kwarg = 'course__slug'
 
     def perform_create(self, serializer):
-        serializer.save(creator=self.request.user,course__slug=self.kwargs.get('course__slug'))
+        course = Course.objects.get(slug=self.kwargs.get('course__slug'))
+        if serializer.is_valid():
+            serializer.save(creator=self.request.user,course=course)
+        else:
+            return Response("error", status=status.HTTP_400_BAD_REQUEST)
 
 class RatingListAPIView(ListAPIView):
     serializer_class = RatingSerializer
