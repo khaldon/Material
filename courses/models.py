@@ -12,13 +12,6 @@ from django.urls import reverse
 User = settings.AUTH_USER_MODEL
 
 
-Rating_CHOICES = (
-    (1, 'Poor'),
-    (2, 'Average'),
-    (3, 'Good'),
-    (4, 'Very good'),
-    (5, 'Excellent')
-)
 
 
 class CourseCategories(models.Model):
@@ -47,7 +40,6 @@ class Course(models.Model):
     poster_preview_video = models.ImageField(upload_to='courses/course_poster_preview', null=True)    
     owned = models.BooleanField(default=False)
     wishes = models.ManyToManyField(User, related_name='wished_courses', blank=True)
-    rating = models.IntegerField(choices=Rating_CHOICES)
     
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -70,12 +62,32 @@ class Course(models.Model):
         return self.title
 
 
+Rating_CHOICES = (
+    (1, 'Poor'),
+    (2, 'Average'),
+    (3, 'Good'),
+    (4, 'Very good'),
+    (5, 'Excellent')
+)
+
+
+class Rating(models.Model):
+    course = models.ForeignKey(Course, related_name='course_rate', on_delete=models.CASCADE)
+    rating = models.IntegerField(choices=Rating_CHOICES)
+    student = models.ForeignKey(User, related_name='user_rate', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "{0}__{1}".format(self.rating, self.student.username)
 
 class CourseSections(models.Model):
     creator = models.ForeignKey(User,related_name='creator_sections',on_delete=models.CASCADE,null=True)
     title = models.CharField(max_length=50)
     course = models.OneToOneField(Course, related_name='course_section', on_delete=models.CASCADE,null=True)
    
+    
+
+
+    
     def __str__(self):
         return self.title
 

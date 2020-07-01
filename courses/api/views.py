@@ -3,12 +3,14 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from courses.models import Course, CourseCategories, CourseSections, SectionVideos
+from courses.models import Course, CourseCategories, CourseSections, SectionVideos, Rating
 from .permissions import IsAdminOrReadOnly
-from .serializers import CourseSerializer, CategorySerializer, CourseSectionSerializer, SectionVideoSerializer
+from .serializers import CourseSerializer, CategorySerializer, CourseSectionSerializer, SectionVideoSerializer, RatingSerializer
 from rest_framework import filters
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
 
 class CategoryListAPIView(ListAPIView):
     queryset = CourseCategories.objects.all()
@@ -137,4 +139,52 @@ class SectionsCreateAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
-        print(serializer)
+
+
+class RatingSerializerCreate(APIView):
+    # queryset = Rating.objects.all()
+    # serializer_class = RatingSerializer
+    def post(self, request, course=None):
+        # rate = Rating.objects.values_list('rating', flat=True)
+        # total = sum(rate)
+        # average = int(total/len(rate))
+        # rate = Rating.objects.get()
+        serializer = RatingSerializer(data=request.data)
+        user = request.user
+        try:
+            if Rating.objects.get(Q(student=user)):
+                return Response("YES")
+        except ObjectDoesNotExist:
+            Rating.objects.create(course=course,rating=serializer, student=user )
+            return Response("you are not username")
+
+
+class CartView(APIView):
+    def get(self, *args,  **kwargs):
+        try:
+            order = Order.objects.get(user=self.request.user, ordered=False)
+            return Response(order)
+        except ObjectDoesNotExit:
+            return Response("Doesn't exits")
+
+
+class AddCart(ListCreateAPIView):
+    def get(self, pk):
+        course = get_object_or_404(Course, pk=pk)
+        order_course, created = OrderCourse.objects.get_or_create(
+        course=course,
+        user=request.user,
+        ordered = False,
+    )
+        order_qs = Order.objects.filter(user=request.user,ordered=False)
+        if order_qs.exists():
+            order = order_qs[0]
+            if order.courses.filter(course__pk=course.pk).exists():
+                return Response("You already have this course in the cart")
+            else:
+                order.courses.add(order_course)
+                return Response("This course was added to your cart.")
+        else:
+            ordered_date = timezone.now()
+            order = Order.objects.create(user=request.user,ordered_date=ordered_date)
+        return Response("You already have this course in the cart")

@@ -1,14 +1,14 @@
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from rest_framework import serializers
-from courses.models import Course, CourseCategories, CourseSections, SectionVideos
+from courses.models import Course, CourseCategories, CourseSections, SectionVideos, Rating
 # from accounts.api.serializers import UserDetailSerializer
-
 class CategorySerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
 
     class Meta:
         model = CourseCategories
         fields = ("id", "title")
+
 
 class CourseSerializer(serializers.ModelSerializer):
     # admins = UserDetailSerializer(read_only=True)
@@ -118,3 +118,9 @@ class SectionVideoSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         preview_image_url = obj.get_picture()
         return request.build_absolute_uri(preview_image_url)
+
+class RatingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Rating
+        fields = ['rating']
