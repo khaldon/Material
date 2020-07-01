@@ -142,10 +142,13 @@ class SectionsCreateAPIView(CreateAPIView):
         serializer.save(creator=self.request.user)
 
 class RatingListAPIView(RetrieveAPIView):
-    queryset = Rating.objects.all()
-    lookup_field = "course__slug"
     serializer_class = RatingSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_field = "course__slug"
+
+    def get_queryset(self):
+        course = self.kwargs["course__slug"]
+        return Rating.objects.filter(course=course)
 
 class RatingCreateAPIView(CreateAPIView):
     queryset = Rating.objects.all()
