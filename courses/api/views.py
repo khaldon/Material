@@ -3,13 +3,16 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from courses.models import Course, CourseCategories, CourseSections, SectionVideos
+from courses.models import Course, CourseCategories, CourseSections, SectionVideos, Rating
 from .permissions import IsAdminOrReadOnly
-from .serializers import CourseSerializer, CategorySerializer, CourseSectionSerializer, SectionVideoSerializer
+from .serializers import (CourseSerializer, CategorySerializer, CourseSectionSerializer,
+                          SectionVideoSerializer, RatingSerializer)
 from rest_framework import filters
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework import status
+from django.db.models import Q
 class CategoryListAPIView(ListAPIView):
     queryset = CourseCategories.objects.all()
     serializer_class = CategorySerializer
@@ -137,7 +140,57 @@ class SectionsCreateAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
-        print(serializer)
+
+
+class RatingCreate(ListCreateAPIView):
+
+    lookup_url_kwarg = ['course', 'student']
+    def post(self, request, course, student):
+        course = self.kwargs['course']
+        student = self.kwargs['student']
+        print(request.data)
+        request.data['course'] = course
+        request.data['student'] = student
+        # print(context)
+        serializer = RatingSerializer(request.data)
+        # print(serializer.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class CartView(APIView):
+    def get(self, *args,  **kwargs):
+        try:
+            order = Order.objects.get(user=self.request.user, ordered=False)
+            return Response(order)
+        except ObjectDoesNotExit:
+            return Response("Doesn't exits")
+
+
+class AddCart(ListCreateAPIView):
+    def get(self, pk):
+        course = get_object_or_404(Course, pk=pk)
+        order_course, created = OrderCourse.objects.get_or_create(
+        course=course,
+        user=request.user,
+        ordered = False,
+    )
+        order_qs = Order.objects.filter(user=request.user,ordered=False)
+        if order_qs.exists():
+            order = order_qs[0]
+            if order.courses.filter(course__pk=course.pk).exists():
+                return Response("You already have this course in the cart")
+            else:
+                order.courses.add(order_course)
+                return Response("This course was added to your cart.")
+        else:
+            ordered_date = timezone.now()
+            order = Order.objects.create(user=request.user,ordered_date=ordered_date)
+        return Response("You already have this course in the cart")
 
 class VideosListAPIView(RetrieveAPIView):
     """
