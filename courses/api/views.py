@@ -99,37 +99,20 @@ class GetWishedCourses(APIView):
         courses_list = [{'id': course.id, 'title': course.title} for course in courses]
         return Response(courses_list)
 
-class SectionsListCreateAPIView(ListCreateAPIView):
+class SectionsListAPIView(ListAPIView):
     """
     View that returns a list of sections & handles the creation of
     sections & returns data back
     """
-    queryset = CourseSections.objects.all()
     serializer_class = CourseSectionSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    filter_backends = [SearchFilter, OrderingFilter]
-    search_fields = ['title']
+    model = serializer_class.Meta.model
+    lookup_field = 'course__slug'
 
-# class SectionsListCreateAPIView(ListCreateAPIView):
-#     """
-#     View that returns a list of sections & handles the creation of
-#     sections & returns data back
-#     """
-#     queryset = CourseSections.objects.all()
-#     serializer_class = CourseSectionSerializer
-#     permission_classes = [IsAuthenticatedOrReadOnly]
-#     filter_backends = [SearchFilter, OrderingFilter]
-#     search_fields = ['title']
-
-class SectionsListAPIView(RetrieveAPIView):
-    """
-    View that returns a list of sections & handles the creation of
-    sections & returns data back
-    """
-    queryset = CourseSections.objects.all()
-    lookup_field = "course__slug"
-    serializer_class = CourseSectionSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    def get_queryset(self):
+        course__slug = self.kwargs["course__slug"]
+        queryset = self.model.objects.filter(course__slug=course__slug)
+        return queryset
 
 class SectionsCreateAPIView(CreateAPIView):
     queryset = CourseSections.objects.all()
@@ -139,7 +122,7 @@ class SectionsCreateAPIView(CreateAPIView):
     lookup_url_kwarg = 'course__slug'
 
     def perform_create(self, serializer):
-        serializer.save(creator=self.request.user)
+        serializer.save(creator=self.request.user,course__slug=self.kwargs.get('course__slug'))
 
 class RatingListAPIView(ListAPIView):
     serializer_class = RatingSerializer
