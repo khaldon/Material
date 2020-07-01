@@ -3,14 +3,12 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from courses.models import Course, CourseCategories, CourseSections, SectionVideos, Rating
+from courses.models import Course, CourseCategories, CourseSections, SectionVideos
 from .permissions import IsAdminOrReadOnly
-from .serializers import CourseSerializer, CategorySerializer, CourseSectionSerializer, SectionVideoSerializer, RatingSerializer
+from .serializers import CourseSerializer, CategorySerializer, CourseSectionSerializer, SectionVideoSerializer
 from rest_framework import filters
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Q
-from django.core.exceptions import ObjectDoesNotExist
 
 class CategoryListAPIView(ListAPIView):
     queryset = CourseCategories.objects.all()
@@ -188,3 +186,24 @@ class AddCart(ListCreateAPIView):
             ordered_date = timezone.now()
             order = Order.objects.create(user=request.user,ordered_date=ordered_date)
         return Response("You already have this course in the cart")
+
+class VideosListAPIView(RetrieveAPIView):
+    """
+    View that returns a list of videos & handles the creation of
+    videos & returns data back
+    """
+    queryset = SectionVideos.objects.all()
+    lookup_field = "section__course__slug"
+    serializer_class = SectionVideoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
+
+class VideosCreateAPIView(CreateAPIView):
+    queryset = SectionVideos.objects.all()
+    serializer_class = SectionVideoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
+    # lookup_field = 'slug'
+    # lookup_url_kwarg = 'course__slug'
+
+    # def perform_create(self, serializer):
+    #     serializer.save(creator=self.request.user)
+    #     print(serializer)
