@@ -141,8 +141,13 @@ class SectionsCreateAPIView(CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
 
+class RatingListAPIView(RetrieveAPIView):
+    queryset = Rating.objects.all()
+    lookup_field = "course__slug"
+    serializer_class = RatingSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-class RatingCreate(CreateAPIView):
+class RatingCreateAPIView(CreateAPIView):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
 
@@ -159,9 +164,6 @@ class RatingCreate(CreateAPIView):
         else:
             return Response("Rating is onetime only", status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
 class CartView(APIView):
     def get(self, *args,  **kwargs):
         try:
@@ -169,7 +171,6 @@ class CartView(APIView):
             return Response(order)
         except ObjectDoesNotExit:
             return Response("Doesn't exits")
-
 
 class AddCart(ListCreateAPIView):
     def get(self, pk):

@@ -3,7 +3,7 @@ from .views import (CourseListCreateAPIView, CourseRetrieveUpdateDestroyAPIView,
                     GetJoinedCourses, JoinCourseView, WishCourseView,
                     GetWishedCourses, CategoryListAPIView, SectionsListAPIView,
                     SectionsCreateAPIView, VideosListAPIView,
-                    VideosCreateAPIView, RatingCreate)
+                    VideosCreateAPIView, RatingListAPIView, RatingCreateAPIView)
 
 urlpatterns = [
     url(r'^courses/$', CourseListCreateAPIView.as_view(), name='list_or_create_courses'),
@@ -17,5 +17,6 @@ urlpatterns = [
     url(r'^sections/(?P<course__slug>[-\w]+)/create/$', SectionsCreateAPIView.as_view(), name='create_sections'),
     url(r'^videos/(?P<section__course__slug>[-\w]+)/$', VideosListAPIView.as_view(), name='list_videos'),
     url(r'^videos/create/$', VideosCreateAPIView.as_view(), name='create_videos'),
-    url(r'^rate/create/(?P<course>.+)/$', RatingCreate.as_view(), name='rate' )
+    url(r'^rates/(?P<course__slug>[-\w]+)/$', RatingListAPIView.as_view(), name='list_rates'),
+    url(r'^rate/create/(?P<course>.+)/$', RatingCreate.as_view(), name='rate'),
 ]
