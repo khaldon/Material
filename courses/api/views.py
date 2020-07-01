@@ -141,26 +141,11 @@ class SectionsCreateAPIView(CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
 
-
-class RatingCreate(ListCreateAPIView):
-
-    lookup_url_kwarg = ['course', 'student']
-    def post(self, request, course, student):
-        course = self.kwargs['course']
-        student = self.kwargs['student']
-        print(request.data)
-        request.data['course'] = course
-        request.data['student'] = student
-        # print(context)
-        serializer = RatingSerializer(request.data)
-        # print(serializer.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
-
-
-
+class RatingListAPIView(RetrieveAPIView):
+    queryset = Rating.objects.all()
+    lookup_field = "course__slug"
+    serializer_class = RatingSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class CartView(APIView):
     def get(self, *args,  **kwargs):
@@ -169,7 +154,6 @@ class CartView(APIView):
             return Response(order)
         except ObjectDoesNotExit:
             return Response("Doesn't exits")
-
 
 class AddCart(ListCreateAPIView):
     def get(self, pk):
