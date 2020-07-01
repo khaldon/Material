@@ -147,16 +147,17 @@ class RatingCreate(CreateAPIView):
     serializer_class = RatingSerializer
 
     def post(self, request, course):
-
         course  = Course.objects.get(slug=course)
         rating = self.request.query_params.get('rate')
         student = request.user.id
-        context = {'course':course.id, 'student':student, 'rating':rating}
-        serializer = RatingSerializer(data = context)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+        context = {'course': course.id, 'student': student, 'rating': rating}
+        serializer = RatingSerializer(data=context)
+        if course.course_rate.all().filter(student=request.user).count() == 0:
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response("Rating is onetime only", status=status.HTTP_400_BAD_REQUEST)
 
 
 

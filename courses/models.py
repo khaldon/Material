@@ -72,7 +72,8 @@ class Rating(models.Model):
     rating = models.IntegerField(choices=Rating_CHOICES, default=0)
     student = models.ForeignKey(User, related_name='user_rate', on_delete=models.CASCADE)
     course = models.ForeignKey(Course, related_name='course_rate', on_delete=models.CASCADE)
-
+    def __str__(self):
+        return "{}-{}".format(self.student.username, self.course.title)
 
 
 class CourseSections(models.Model):
