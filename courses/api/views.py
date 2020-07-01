@@ -142,18 +142,17 @@ class SectionsCreateAPIView(CreateAPIView):
         serializer.save(creator=self.request.user)
 
 
-class RatingCreate(ListCreateAPIView):
+class RatingCreate(CreateAPIView):
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
 
-    lookup_url_kwarg = ['course', 'student']
-    def post(self, request, course, student):
-        course = self.kwargs['course']
-        student = self.kwargs['student']
-        print(request.data)
-        request.data['course'] = course
-        request.data['student'] = student
-        # print(context)
-        serializer = RatingSerializer(request.data)
-        # print(serializer.data)
+    def post(self, request, course):
+
+        course  = Course.objects.get(slug=course)
+        rating = self.request.query_params.get('rate')
+        student = request.user.id
+        context = {'course':course.id, 'student':student, 'rating':rating}
+        serializer = RatingSerializer(data = context)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
