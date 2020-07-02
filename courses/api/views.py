@@ -193,23 +193,24 @@ class AddCart(ListCreateAPIView):
             order = Order.objects.create(user=request.user,ordered_date=ordered_date)
         return Response("You already have this course in the cart")
 
-class VideosListAPIView(RetrieveAPIView):
+class VideosListAPIView(ListAPIView):
     """
     View that returns a list of videos & handles the creation of
     videos & returns data back
     """
-    queryset = SectionVideos.objects.all()
-    lookup_field = "section__course__slug"
+
+    lookup_field = "section__title"
     serializer_class = SectionVideoSerializer
+    model = serializer_class.Meta.model
     permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
+
+    def get_queryset(self):
+        section__title = self.kwargs["section__title"]
+        queryset = self.model.objects.filter(section__title=section__title)
+        return queryset
 
 class VideosCreateAPIView(CreateAPIView):
     queryset = SectionVideos.objects.all()
     serializer_class = SectionVideoSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
-    # lookup_field = 'slug'
-    # lookup_url_kwarg = 'course__slug'
-
-    # def perform_create(self, serializer):
-    #     serializer.save(creator=self.request.user)
-    #     print(serializer)
+    

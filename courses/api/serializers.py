@@ -108,7 +108,7 @@ class SectionVideoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SectionVideos
-        fields = ['title', 'video', 'section', 'preview_image', 'short_description', 'watched', 'created']
+        fields = ['title', 'video', 'section', 'preview_image', 'short_description', 'watched', 'created', 'created_naturaltime']
 
     def get_created_naturaltime(self, obj):
         """Returns human readable time"""
