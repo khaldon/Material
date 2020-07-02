@@ -209,8 +209,7 @@ class VideosListAPIView(ListAPIView):
         queryset = self.model.objects.filter(section__title=section__title)
         return queryset
 
-class VideosCreateAPIView(CreateAPIView):
+class VideosCreateAPIView(ListCreateAPIView):
     queryset = SectionVideos.objects.all()
     serializer_class = SectionVideoSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
-    
