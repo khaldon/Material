@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from slugify import UniqueSlugify
 from django.urls import reverse
+# from video_encoding.fields import VideoField
 # from languages.fields import LanguageField
 
 # Create your models here.
@@ -26,6 +27,10 @@ class CourseCategories(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name = "course category"
+        verbose_name_plural = "course categories"
 
 
 class Course(models.Model):
@@ -84,9 +89,14 @@ class CourseSections(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "course section"
+        verbose_name_plural = "course sections"
+
 
 class SectionVideos(models.Model):
     title = models.CharField(max_length=50,null=True)
+    # duration = models.FloatField(editable=False, null=True)
     video = models.FileField(upload_to='courses/course_videos',max_length=100)
     section = models.ForeignKey(CourseSections,on_delete=models.CASCADE,null=True)
     preview_image = models.ImageField(upload_to='courses/course_videos_preview_images',null=True)
@@ -104,6 +114,10 @@ class SectionVideos(models.Model):
 
     def get_absolute_url(self):
         return reverse('courses:course_detail',args=[self.section.course.slug])
+
+    class Meta:
+        verbose_name = "section video"
+        verbose_name_plural = "section videos"
 
 @receiver(post_save, sender=Course)
 def create_section_course(sender, instance, created, **kwargs):

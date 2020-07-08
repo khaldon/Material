@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'languages',
     'orders',
     'django_filters',
+    # 'video_encoding',
 ]
 
 MIDDLEWARE = [

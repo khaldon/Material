@@ -17,7 +17,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 
-
+def check_video_extension(filename):
+    """Checks filename extension"""
+    ext = ['.mp4', '.webm', '.mkv', '.avi', '.wmv', '.amv', '.m4v', 'flv', 'flv' ]
+    for e in ext:
+        if filename.endswith(e):
+            return True
+    return False
 
 class CategoryListAPIView(ListAPIView):
     queryset = CourseCategories.objects.all()

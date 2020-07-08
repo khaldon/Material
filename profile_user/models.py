@@ -30,7 +30,7 @@ class Profile(models.Model):
             return default_picture
 
     def __str__(self):
-        return self.user
+        return self.user.username
 
 
 @receiver(post_save, sender=User)
